@@ -1,2 +1,26 @@
 ssh -p 2221 behemoth5@behemoth.labs.overthewire.org
 pass: aizeeshing
+
+'''
+Workflow:
+	1. Open the pass file as stream with `fopen`.
+	2. seek the file stream to 2 offset.
+	3. Get the file pos indicator.
+	4. Add 1 to the pos indicator.
+	5. Reset the pos indicator to the start of the file.
+	...
+
+	After a while, I stopped analyzing the code in depth,
+	and decided to just skim through it, at the end I noticed
+	that there was some networking involved, especially noticed the
+	`socket` and `sendto` and most importantly the `1337` port.
+
+	Combine that information with the fact that I saw the flag was being opened at the beginning,
+	I decided to start a UDP server on 1337 using `ncat`, just to give it a shot.
+	I ran `ncat -lu -p 1337`, and then sent it to the background using `Ctrl ^Z` and `bg`.
+	Then I ran the binary `/behemoth/behemoth5` and I wasn't quite surprised to see that the password was sent over the socket!
+
+	Amazing!
+	Sometimes you don't have to understand every bit of the code,
+	and skimming through might give you the faster solution.
+'''
