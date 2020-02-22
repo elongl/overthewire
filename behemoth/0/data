@@ -1,0 +1,8 @@
+pass: behemoth0
+
+
+
+def xorstr(_str):
+	return ''.join(chr(ord(c) ^ 42) for c in _str)
+
+./behemoth0 xorstr('OK^G') + xorstr('SYBE') + xorstr('X^Y')

