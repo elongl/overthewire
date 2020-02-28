@@ -1,2 +1,33 @@
 ssh -p 2221 behemoth6@behemoth.labs.overthewire.org
 pass: mayiroeche
+
+'''
+Workflow:
+	1. Open the `/behemoth/behemoth6_reader` file using `popen`.
+	2. Allocate 10 bytes --> `ptr`.
+	3. Read the first 10 bytes of `behemoth6_reader` pipe into `ptr`.
+	4. Compare it to "HelloKitty",
+		If equal, spawn shell.
+		Else, print "Incorrect output".
+
+Basically we need to hack `behemoth6_reader` to print `HelloKitty`.
+In order to do so we reversed it as well.
+Initially I thought, why not just spawn a shell through `behemoth6_reader`,
+then I noticed it's not a SUID program.
+
+It seems that the code iterates over `shellcode.txt`,
+and if it finds a character (a byte) in the file's content that is `0x0b`,
+it prints "Write your own shellcode." and exits.
+
+In order to deal with that, we'd simply have to supply a shellcode that doesn't contain this character.
+I end up finding a shellcode of the internet that simply prints a certain text.
+It could be found here:
+https://stackoverflow.com/questions/15593214/linux-shellcode-hello-world
+
+I took the following shellcode, changed the Hello World message into `HelloKitty`, and uploaded it to `/tmp/shellcode.txt`.
+And then, when I executed `behemoth6_reader`, it printed out `HelloKitty`, so now, all I had to do was execute `behemoth6`.
+As expected, a SUID shell was spawned under the `behemoth7` user!
+Now we can read the flag at `/etc/behemoth_pass/behemoth7`.
+
+What a fun challenge :)
+'''
