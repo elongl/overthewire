@@ -24,7 +24,7 @@ I end up finding a shellcode of the internet that simply prints a certain text.
 It could be found here:
 https://stackoverflow.com/questions/15593214/linux-shellcode-hello-world
 
-I took the following shellcode, changed the Hello World message into `HelloKitty`, and uploaded it to `/tmp/shellcode.txt`.
+I took the following shellcode, changed the "Hello World" message into "HelloKitty", and uploaded it to `/tmp/shellcode.txt`.
 And then, when I executed `behemoth6_reader`, it printed out `HelloKitty`, so now, all I had to do was execute `behemoth6`.
 As expected, a SUID shell was spawned under the `behemoth7` user!
 Now we can read the flag at `/etc/behemoth_pass/behemoth7`.
