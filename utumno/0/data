@@ -1,0 +1,11 @@
+ssh -p 2227 utumno0@utumno.labs.overthewire.org
+pass: utumno0
+
+'''
+We're going to hook the `puts` in order to execute arbitrary code using LD_PRELOAD.
+
+My first attempt was to 
+'''
+
+# Launch the program like so:
+LD_PRELOAD=/tmp/puts.so /utumno/utumno0
