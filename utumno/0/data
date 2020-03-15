@@ -32,7 +32,7 @@ Disclaimer: I was pretty tired and I wasn't even thinking about the fact that
 /proc/self is a symlink to the /proc/<pid> and I thought it might exist.
 I was also noticed to the existence of /proc/<pid>/exe!
 which is a virtual file containing the executable itself, which is just what I was looking for.
-Though once again, I still couldn't read it still /proc isn't accessible since I don't have read permissions to the binary.
+Though once again, I still couldn't read it still /proc didn't exist, and worst, /proc/<pid>/exe is simply a symlink to the executable which I still don't have read access to.
 '''
 
 # Launch the program like so:
