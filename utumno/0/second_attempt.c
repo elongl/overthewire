@@ -19,5 +19,5 @@ int puts(const char *s) {
 		printf("An error has occured.");
 		return -1;
 	}
-	fclose(exe);
+	fclose(exe);	
 }

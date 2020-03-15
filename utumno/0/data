@@ -4,7 +4,35 @@ pass: utumno0
 '''
 We're going to hook the `puts` in order to execute arbitrary code using LD_PRELOAD.
 
-My first attempt was to 
+My first attempt was to lookup the executable in memory through /proc/<pid>/maps.
+Sample:
+--- THIS PART ---
+55a9432aa000-55a9432ac000 r--p 00000000 08:12 11927712                   /usr/bin/cat
+55a9432ac000-55a9432b1000 r-xp 00002000 08:12 11927712                   /usr/bin/cat
+55a9432b1000-55a9432b4000 r--p 00007000 08:12 11927712                   /usr/bin/cat
+55a9432b4000-55a9432b5000 r--p 00009000 08:12 11927712                   /usr/bin/cat
+55a9432b5000-55a9432b6000 rw-p 0000a000 08:12 11927712                   /usr/bin/cat
+--- THIS PART ---
+55a944491000-55a9444b2000 rw-p 00000000 00:00 0                          [heap]
+7fbcd4548000-7fbcd456a000 rw-p 00000000 00:00 0 
+7fbcd456a000-7fbcd4ada000 r--p 00000000 08:12 11927904                   /usr/lib/locale/locale-archive
+7fbcd4ada000-7fbcd4aff000 r--p 00000000 08:12 11931226                   /usr/lib/x86_64-linux-gnu/libc-2.30.so
+...
+7ffddec36000-7ffddec57000 rw-p 00000000 00:00 0                          [stack]
+7ffdded7b000-7ffdded7e000 r--p 00000000 00:00 0                          [vvar]
+7ffdded7e000-7ffdded7f000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]
+
+And later dump all the memory in between (0x55a9432aa000 - 0x55a9432b6000) to a file.
+This failed since the /proc/<pid> wasn't being created so I wasn't able to extract the maps in the following manner,
+though I realized it too late.
+
+At my second attempt,
+Disclaimer: I was pretty tired and I wasn't even thinking about the fact that 
+/proc/self is a symlink to the /proc/<pid> and I thought it might exist.
+I was also noticed to the existence of /proc/<pid>/exe!
+which is a virtual file containing the executable itself, which is just what I was looking for.
+Though once again, I still couldn't read it still /proc isn't accessible since I don't have read permissions to the binary.
 '''
 
 # Launch the program like so:
