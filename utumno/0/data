@@ -34,7 +34,15 @@ I was also noticed to the existence of /proc/<pid>/exe!
 which at the time I thought was a virtual file containing the executable itself, which is just what I was looking for.
 Though once again, I still couldn't read it still /proc didn't exist, and even worse,
 turns out /proc/<pid>/exe is simply a symlink to the executable which I still don't have read access to.
+
+After getting a hint that the password is stored on the stack,
+I decided to simply examine the memory between the "Read me! :P" string.
+I ended up writing this function that simply iterates 255 bytes before and after the string and prints out the bytes as characters.
+
+I'm still quite confused. How was I supposed to know that the password is placed on the stack?
+Anyway...
 '''
 
 # Launch the program like so:
+make
 LD_PRELOAD=/tmp/puts.so /utumno/utumno0
