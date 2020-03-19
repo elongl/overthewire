@@ -1,2 +1,26 @@
 ssh -p 2227 utumno2@utumno.labs.overthewire.org
 pass: ceewaceiph
+
+'''
+What the binary does is check if argc == 0,
+if it doesn't, it exits,
+else, it takes the 10th argument of argv, and copies it dangerously (not size limit) into a buffer.
+
+We need to understand, how can we both pass data into argv[10] and inject our shellcode in there (buffer overflow),
+I built a short program that simply prints out what's there.
+
+Running the program, I noticed that argv[1] and so on are the environment variables which are placed on the stack.
+
+At this point,
+I realized that what I'm supposed to do is position my shellcode at the 10th env variable according to the argv,
+and then just treat is as a classic buffer overflow.
+
+Also, it's important to launch the program using `exec` so that you'll be able to omit argv completely so argc will be 0.
+
+It took me quite a while to solve this, for some reason.
+the main thing I learned is that the syntax of `KEY=VALUE` is only a convention in environment variables,
+and that they can simply be any form of strings just like argv.
+'''
+
+Breakpoint after `strcpy`: 0x804847d
+Shellcode: 0xffffdf80
