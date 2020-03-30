@@ -1,6 +1,5 @@
 # OverTheWire
 
-## Introduction
 OverTheWire is a series of wargames offered by the community to help you to learn and practice security concepts in the form of fun-filled games.
 
 ---
